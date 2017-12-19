@@ -1,0 +1,41 @@
+{
+  "name": "larvitbase-api",
+  "version": "0.1.0",
+  "description": "API framework based on larvitbase",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/tape/bin/tape ./test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larvit/larvitbase-api.git"
+  },
+  "keywords": [
+    "http",
+    "api",
+    "rest",
+    "framework"
+  ],
+  "author": {
+    "name": "Mikael 'Lilleman' Göransson",
+    "email": "lilleman@larvit.se",
+    "url": "http://github.com/larvit/larvitbase"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/larvit/larvitbase-api/issues"
+  },
+  "homepage": "https://github.com/larvit/larvitbase-api#readme",
+  "dependencies": {
+    "larvitbase": "^2.0.0"
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.0",
+    "eslint": "^4.13.1",
+    "freeport": "^1.0.5",
+    "istanbul": "^0.4.5",
+    "request": "^2.83.0",
+    "tape": "^4.8.0",
+    "tape-eslint": "^1.2.1"
+  }
+}
