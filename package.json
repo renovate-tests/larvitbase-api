@@ -27,7 +27,11 @@
   },
   "homepage": "https://github.com/larvit/larvitbase-api#readme",
   "dependencies": {
-    "larvitbase": "^2.0.0"
+	"larvitbase": "^2.0.0",
+	"larvitfs": "^2.0.2",
+	"larvitrouter": "larvit/larvitrouter#v2.0",
+	"winston": "^2.4.0",
+	"url": "^0.11.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.0",
