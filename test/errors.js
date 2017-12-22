@@ -3,7 +3,8 @@
 const	request	= require('request'),
 	async	= require('async'),
 	test	= require('tape'),
-	Api	= require(__dirname + '/../index.js');
+	Api	= require(__dirname + '/../index.js'),
+	fs	= require('fs');
 
 test('404 for old version', function (t) {
 	const	tasks	= [];
@@ -110,6 +111,12 @@ test('500 error if something is wrong with the README file', function (t) {
 
 	let	api;
 
+	// Fuck up the permissions of the README file
+	tasks.push(function(cb) {
+		fs.chmodSync(__dirname + '/../test_environment/4/lurk/README.md', '000');
+		cb();
+	});
+
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
@@ -130,6 +137,12 @@ test('500 error if something is wrong with the README file', function (t) {
 	// Close server
 	tasks.push(function (cb) {
 		api.lBase.httpServer.close(cb);
+	});
+
+	// Change back ok permissions to the README file
+	tasks.push(function(cb) {
+		fs.chmodSync(__dirname + '/../test_environment/4/lurk/README.md', '644');
+		cb();
 	});
 
 	async.series(tasks, function (err) {
