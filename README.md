@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/larvit/larvitbase-api.svg)](https://travis-ci.org/larvit/larvitbase-api) [![Dependencies](https://david-dm.org/larvit/larvitbase-api.svg)](https://david-dm.org/larvit/larvitbase-api.svg)
-[![Coverage Status](https://coveralls.io/repos/larvit/larvitbase-api/badge.svg)](https://coveralls.io/github/larvit/larvitbase-api)
+[![Coverage Status](https://coveralls.io/repos/github/larvit/larvitbase-api/badge.svg)](https://coveralls.io/github/larvit/larvitbase-api)
 
 # larvitbase-api
 
