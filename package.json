@@ -27,14 +27,15 @@
   },
   "homepage": "https://github.com/larvit/larvitbase-api#readme",
   "dependencies": {
-	"larvitbase": "^2.0.0",
-	"larvitfs": "^2.0.2",
-	"larvitrouter": "larvit/larvitrouter#v2.0",
-	"semver": "^5.4.1",
-	"winston": "^2.4.0",
-	"url": "^0.11.0"
+    "larvitbase": "^2.0.0",
+    "larvitfs": "^2.0.2",
+    "larvitrouter": "^2.0.0",
+    "semver": "^5.4.1",
+    "winston": "^2.4.0",
+    "url": "^0.11.0"
   },
   "devDependencies": {
+    "async": "^2.6.0",
     "coveralls": "^3.0.0",
     "eslint": "^4.13.1",
     "freeport": "^1.0.5",

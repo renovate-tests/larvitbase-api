@@ -16,19 +16,19 @@ npm i larvitbase-api
 In the file index.js:
 
 ```javascript
-const App = require('larvitbase-api');
+const Api = require('larvitbase-api');
 
-let app;
+let api;
 
-app = new App({
+api = new Api({
 	'lBaseOptions':	{'httpOptions': 8001},	// sent to larvitbase
 	'routerOptions':	{}	// sent to larvitrouter
 });
 
 // Exposed stuff
-//app.lBase	- larvitbase instance
-//app.options	- the options sent in when instanciated
-//app.apiVersions	- resolved versions of the API (subfolders to controllers folder)
+//api.lBase	- larvitbase instance
+//api.options	- the options sent in when instanciated
+//api.apiVersions	- resolved versions of the API (subfolders to controllers folder)
 ```
 
 Then just start the file from shell:

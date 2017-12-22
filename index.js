@@ -9,6 +9,8 @@ const	logPrefix = 'larvitbase-api ./index.js - ',
 	url	= require('url'),
 	fs	= require('fs');
 
+
+
 function Api(options, cb) {
 	const	that	= this;
 
@@ -36,9 +38,11 @@ function Api(options, cb) {
 	// Resolve apiVersions
 	controllersFullPath	= that.options.routerOptions.basePath + '/' + that.options.routerOptions.controllersPath;
 	that.apiVersions	= fs.readdirSync(controllersFullPath).filter(function (file) {
+		let	versionStr	= semver.clean(String(file));
+
 		if (
 			fs.statSync(controllersFullPath + '/' + file).isDirectory()
-			&& semver.clean(semver.valid(file)) !== null
+			&& semver.valid(versionStr) !== null
 		) {
 			return true;
 		} else {
@@ -111,7 +115,12 @@ function Api(options, cb) {
 
 	// Run controller
 	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+console.log('wuff');
+
 		if ( ! req.routed.controllerFullPath) {
+console.log('bal');
+console.log(res.data);
+console.log(req.routed);
 			res.statusCode	= 404;
 			res.data	= 'URL endpoint not found';
 		} else {
@@ -121,6 +130,7 @@ function Api(options, cb) {
 
 	// Output JSON to client
 	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+console.log('baff');
 		res.setHeader('Content-Type', 'application/json; charset=UTF-8');
 		res.end(res.data); // här måste det vara en sträng. Ska vi fixa här, i controllers eller base?
 		cb();
