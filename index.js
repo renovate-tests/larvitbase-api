@@ -50,7 +50,7 @@ function Api(options, cb) {
 	controllersFullPath	= path.join(that.options.routerOptions.basePath, that.options.routerOptions.controllersPath);
 	if (fs.existsSync(controllersFullPath)) {
 		that.apiVersions	= fs.readdirSync(controllersFullPath).filter(function (file) {
-			let	versionStr	= semver.clean(String(file));
+			let	versionStr	= semver.clean(String(file) + '.0');
 
 			if (
 				fs.statSync(controllersFullPath + '/' + file).isDirectory()
@@ -68,7 +68,7 @@ function Api(options, cb) {
 
 	// Sort apiVersions
 	that.apiVersions.sort(function (a, b) {
-		return semver.gt(a, b);
+		return semver.gt(a + '.0', b + '.0');
 	});
 
 	// Instantiate the router
@@ -76,7 +76,7 @@ function Api(options, cb) {
 
 	// Default to the latest version of the API
 	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
-		if ( ! semver.valid(req.url.split('/')[1]) && that.apiVersions.length) {
+		if ( ! semver.valid(req.url.split('/')[1] + '.0') && that.apiVersions.length) {
 			req.url	= '/' + that.apiVersions[that.apiVersions.length - 1] + req.url;
 		}
 		req.apiVersion	= req.url.split('/')[1];
@@ -102,12 +102,12 @@ function Api(options, cb) {
 
 		// Get readme directly from root, if it is missing in version folders
 		// AND requested url is exactly a version-url
-		} else if (semver.valid(req.url.split('/')[1]) && lfs.getPathSync('README.md') && req.urlBase === '/' + req.urlBase.split('/')[1] + '/') {
+		} else if (semver.valid(req.url.split('/')[1] + '.0') && lfs.getPathSync('README.md') && req.urlBase === '/' + req.urlBase.split('/')[1] + '/') {
 			readmeFile	= lfs.getPathSync('README.md');
 
 		// Get hard coded string if root or version-url is requested and README.md is missing
 		// AND requested url is exactly a version-url
-		} else if (req.urlBase === '/' || semver.valid(req.url.split('/')[1]) && req.urlBase === '/' + req.url.split('/')[1] + '/') {
+		} else if (req.urlBase === '/' || semver.valid(req.url.split('/')[1] + '.0') && req.urlBase === '/' + req.url.split('/')[1] + '/') {
 			return res.end('API is up and running. This API contains no README.md');
 		}
 

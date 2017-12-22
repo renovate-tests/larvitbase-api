@@ -96,7 +96,7 @@ test('Get specific version of README.md', function (t) {
 
 	// Try 200 request for README.md
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2.0/', function (err, response, body) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2/', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'This is old 0.2.0\n');

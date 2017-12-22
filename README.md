@@ -45,13 +45,21 @@ Will print your apps README.md when the browser targets http://localhost:8001/
 
 ### Run controllers
 
-Will run controllers in your apps "controllers/vX.X"-folder (or node_module/xxx/controllers/vX.X, see [larvitfs](https://github.com/larvit/larvitfs) for details on the virtual filesystem the routing module uses for this). For example /foo will run the controller controllers/v1.2/foo.js, given that v1.2 is the latest version. For details about how to write controllers, see [larvitbase](https://github.com/larvit/larvitbase).
+Will run controllers in your apps "controllers/X.X"-folder (or node_module/xxx/controllers/X.X, see [larvitfs](https://github.com/larvit/larvitfs) for details on the virtual filesystem the routing module uses for this). For example /foo will run the controller controllers/1.2/foo.js, given that 1.2 is the latest version. For details about how to write controllers, see [larvitbase](https://github.com/larvit/larvitbase).
 
 It is also possible to request a specific version fo the API. Consider:
 
-* /foo -> controllers/v1.2/foo.js
-* /v1.2/foo -> controllers/v1.2/foo.js
-* /v1.0/foo -> controllers/v1.0/foo.js
+* /foo -> controllers/1.2/foo.js
+* /1.2/foo -> controllers/1.2/foo.js
+* /1.0/foo -> controllers/1.0/foo.js
+
+#### Valid versions
+
+We are using [semver](https://www.npmjs.com/package/semver) where we do the following:
+
+1. Run .clean() to change for example "v2.1" to "2.1"
+2. Add a patch version, so "2.1" becomes "2.1.0" (this is because patches should never change the API, just fix bugs and issues without changing spec)
+3. Check the result with .valid()
 
 ### Output raw JSON
 

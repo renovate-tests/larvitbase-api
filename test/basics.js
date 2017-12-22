@@ -130,7 +130,7 @@ test('Specific version request', function (t) {
 
 	// Try 200 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2.0/wepp', function (err, response, body) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2/wepp', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"v":"0.2.0"}');
@@ -163,7 +163,7 @@ test('Get specific version of README.md', function (t) {
 
 	// Try 200 request for README.md
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2.0/?dal', function (err, response, body) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2/?dal', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'This is old 0.2.0\n');
