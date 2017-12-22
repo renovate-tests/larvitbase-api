@@ -10,13 +10,13 @@ const	freeport	= require('freeport'),
 // Set up winston
 log.remove(log.transports.Console);
 /**/log.add(log.transports.Console, {
-	'level':	'verbose',
+	'level':	'warn',
 	'colorize':	true,
 	'timestamp':	true,
 	'json':	false
 });/**/
 
-test('Basic request', function (t) {
+test('Get README.md on /', function (t) {
 	const	tasks	= [];
 
 	let	port,
@@ -45,14 +45,59 @@ test('Basic request', function (t) {
 		request('http://localhost:' + port + '/', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
-			t.equal(body,	'Hello world');
+			t.equal(body,	'This is it\n');
 			cb();
 		});
 	});
 
 	// Close server
 	tasks.push(function (cb) {
-		api.httpServer.close(cb);
+		api.lBase.httpServer.close(cb);
+	});
+
+	async.series(tasks, function (err) {
+		if (err) throw err;
+		t.end();
+	});
+});
+
+test('Get 200 OK and hard coded string when README.md not found', function (t) {
+	const	tasks	= [];
+
+	let	port,
+		api;
+
+	t.timeoutAfter(200);
+
+	// Get free port
+	tasks.push(function (cb) {
+		freeport(function (err, result) {
+			port	= result;
+			cb(err);
+		});
+	});
+
+	// Start server
+	tasks.push(function (cb) {
+		api = new Api({
+			'lBaseOptions':	{'httpOptions': port},
+			'routerOptions':	{'basePath': __dirname + '/../test_environment/2'}
+		}, cb);
+	});
+
+	// Try 200 request for README.md
+	tasks.push(function (cb) {
+		request('http://localhost:' + port + '/', function (err, response, body) {
+			if (err) return cb(err);
+			t.equal(response.statusCode,	200);
+			t.equal(body,	'API is up and running. This API contains no README.md');
+			cb();
+		});
+	});
+
+	// Close server
+	tasks.push(function (cb) {
+		api.lBase.httpServer.close(cb);
 	});
 
 	async.series(tasks, function (err) {

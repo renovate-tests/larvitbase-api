@@ -92,10 +92,24 @@ function Api(options, cb) {
 		let	readmeFile	= false;
 
 		// Check if url is matching a directory that contains a README.md
+
+		// Request directly on root, existing README.md in root
 		if (req.url === '/' && lfs.getPathSync(that.options.routerOptions.basePath + '/README.md')) {
 			readmeFile	= that.options.routerOptions.basePath + '/README.md';
-		} else if (lfs.getPathSync('controllers' + req.url + '/README.md')) {
+
+		// README exists on exactly the URL requested
+		} else if (lfs.getPathSync(req.url + '/README.md')) {
 			readmeFile	= lfs.getPathSync('controllers' + req.url + '/README.md');
+
+		// Get readme directly from root, if it is missing in version folders
+		// AND requested url is exactly a version-url
+		} else if (semver.valid(req.url.split('/')[1]) && lfs.getPathSync('README.md') && req.url === '/' + req.url.split('/')[1] + '/') {
+			readmeFile	= lfs.getPathSync('README.md');
+
+		// Get hard coded string if root or version-url is requested and README.md is missing
+		// AND requested url is exactly a version-url
+		} else if (req.url === '/' || semver.valid(req.url.split('/')[1]) && req.url === '/' + req.url.split('/')[1] + '/') {
+			return res.end('API is up and running. This API contains no README.md');
 		}
 
 		// If a readme file is found, send that to the browser and end the request
@@ -115,12 +129,7 @@ function Api(options, cb) {
 
 	// Run controller
 	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
-console.log('wuff');
-
 		if ( ! req.routed.controllerFullPath) {
-console.log('bal');
-console.log(res.data);
-console.log(req.routed);
 			res.statusCode	= 404;
 			res.data	= 'URL endpoint not found';
 		} else {
@@ -130,7 +139,6 @@ console.log(req.routed);
 
 	// Output JSON to client
 	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
-console.log('baff');
 		res.setHeader('Content-Type', 'application/json; charset=UTF-8');
 		res.end(res.data); // här måste det vara en sträng. Ska vi fixa här, i controllers eller base?
 		cb();
