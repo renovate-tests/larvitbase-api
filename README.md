@@ -26,10 +26,14 @@ api = new Api({
 	'reqParserOptions': {}, // sent to larvitReqParser
 });
 
+api.start(function (err) {}); // callback
+
 // Exposed stuff
 //api.lBase	- larvitbase instance
 //api.options	- the options sent in when instanciated
 //api.apiVersions	- resolved versions of the API (subfolders to controllers folder)
+
+//api.stop() // close httpServer
 ```
 
 Then just start the file from shell:

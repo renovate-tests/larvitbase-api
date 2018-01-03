@@ -26,7 +26,6 @@ test('Get a response from a controller', function (t) {
 	// Try 200 request
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.lBase.httpServer.address().port + '/webb', function (err, response, body) {
-			console.log('-----------');
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"v": "1.3.2"}');
@@ -54,7 +53,13 @@ test('Get a response from a controller, ignoring url parameters', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request
@@ -69,7 +74,7 @@ test('Get a response from a controller, ignoring url parameters', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -98,7 +103,13 @@ test('Get controller without version mappings', function (t) {
 				'controllersPath':	'controllers',
 				'routes':	[]
 			}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request
@@ -113,7 +124,7 @@ test('Get controller without version mappings', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -131,7 +142,13 @@ test('Specific version request', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request
@@ -146,7 +163,7 @@ test('Specific version request', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -164,7 +181,13 @@ test('Get specific version of README.md', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request for README.md
@@ -179,7 +202,7 @@ test('Get specific version of README.md', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -195,7 +218,12 @@ test('Start without options', function (t) {
 
 	// Start server
 	tasks.push(function (cb) {
-		api = new Api(cb);
+		api = new Api();
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request for README.md
@@ -210,7 +238,7 @@ test('Start without options', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -230,6 +258,10 @@ test('Start without options or cb', function (t) {
 		cb();
 	});
 
+	tasks.push(function (cb) {
+		api.start(cb);
+	});
+
 	// Try 200 request for README.md
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.lBase.httpServer.address().port + '/', function (err, response, body) {
@@ -242,7 +274,7 @@ test('Start without options or cb', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {

@@ -15,7 +15,13 @@ test('Get README.md on /', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request for README.md
@@ -30,7 +36,7 @@ test('Get README.md on /', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -58,7 +64,13 @@ test('Get 200 OK and hard coded string when README.md not found', function (t) {
 		api = new Api({
 			'lBaseOptions':	{'httpOptions': port},
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/2'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request for README.md
@@ -73,7 +85,7 @@ test('Get 200 OK and hard coded string when README.md not found', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -91,7 +103,13 @@ test('Get specific version of README.md', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 200 request for README.md
@@ -106,7 +124,7 @@ test('Get specific version of README.md', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {

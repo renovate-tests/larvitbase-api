@@ -1,6 +1,6 @@
 'use strict';
 
-const	//topLogPrefix = 'larvitbase-api: ./index.js: ',
+const	topLogPrefix = 'larvitbase-api: ./index.js: ',
 	ReqParser	= require('larvitreqparser'),
 	Router	= require('larvitrouter'),
 	semver	= require('semver'),
@@ -11,7 +11,8 @@ const	//topLogPrefix = 'larvitbase-api: ./index.js: ',
 	fs	= require('fs');
 
 function Api(options) {
-	const	that	= this;
+	const	that	= this,
+		logPrefix = topLogPrefix + 'Api() - ';
 
 	let	controllersFullPath,
 		lfs;

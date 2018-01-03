@@ -15,7 +15,13 @@ test('404 for old version', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 404 request
@@ -30,7 +36,7 @@ test('404 for old version', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -48,7 +54,13 @@ test('404 for non existing url', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try 404 request
@@ -63,7 +75,7 @@ test('404 for non existing url', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -85,6 +97,10 @@ test('500 error when controller is borked', function (t) {
 		cb(); // Running this outside to get better test coverage
 	});
 
+	tasks.push(function (cb) {
+		api.start(cb);
+	});
+
 	// Try broken request
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.lBase.httpServer.address().port + '/broken', function (err, response, body) {
@@ -97,7 +113,7 @@ test('500 error when controller is borked', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
@@ -121,7 +137,13 @@ test('500 error if something is wrong with the README file', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/4'}
-		}, cb);
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try broken request
@@ -136,7 +158,7 @@ test('500 error if something is wrong with the README file', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	// Change back ok permissions to the README file
@@ -161,7 +183,11 @@ test('500 error when controller data is circular', function (t) {
 		api = new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/2'}
 		});
-		cb(); // Running this outside to get better test coverage
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
 	});
 
 	// Try broken request
@@ -176,7 +202,7 @@ test('500 error when controller data is circular', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {
