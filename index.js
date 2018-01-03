@@ -154,7 +154,7 @@ function Api(options) {
 		cb();
 	});
 
-	// clean up if file storage is used by parser
+	// Clean up if file storage is used by parser
 	that.middleware.push(function (req, res, cb) {
 		that.reqParser.clean(req, res, cb);
 	});
