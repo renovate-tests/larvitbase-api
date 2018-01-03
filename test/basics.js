@@ -11,11 +11,12 @@ test('Get a response from a controller', function (t) {
 
 	let	api;
 
-	// Start server
+	// Initialize api
 	tasks.push(function (cb) {
-		api = new Api({
+		api	= new Api({
 			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
-		}, cb);
+		});
+		cb();
 	});
 
 	tasks.push(function (cb) {

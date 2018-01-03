@@ -1,6 +1,6 @@
 'use strict';
 
-const	topLogPrefix = 'larvitbase-api: ./index.js: ',
+const	//topLogPrefix = 'larvitbase-api: ./index.js: ',
 	ReqParser	= require('larvitreqparser'),
 	Router	= require('larvitrouter'),
 	semver	= require('semver'),
@@ -10,23 +10,14 @@ const	topLogPrefix = 'larvitbase-api: ./index.js: ',
 	log	= require('winston'),
 	fs	= require('fs');
 
-function Api(options, cb) {
+function Api(options) {
 	const	that	= this;
 
 	let	controllersFullPath,
 		lfs;
 
-	if (typeof options === 'function') {
-		cb	= options;
-		options	= {};
-	}
-
 	if ( ! options) {
 		options	= {};
-	}
-
-	if ( ! cb) {
-		cb = function () {};
 	}
 
 	that.options	= options;
@@ -36,9 +27,13 @@ function Api(options, cb) {
 	if ( ! that.options.routerOptions.basePath)	{ that.options.routerOptions.basePath	= process.cwd();	}
 	if ( ! Array.isArray(that.options.routerOptions.routes))	{ that.options.routerOptions.routes	= [];	}
 
-	if ( ! that.options.lBaseOptions) that.options.lBaseOptions = {};
+	if ( ! that.options.lBaseOptions) that.options.lBaseOptions	= {};
 
-	that.middleware = options.lBaseOptions.middleware || [];
+	if ( ! Array.isArray(options.lBaseOptions.middleware)) {
+		options.lBaseOptions.middleware	= [];
+	}
+
+	that.middleware	= options.lBaseOptions.middleware;
 
 	// Instantiate lfs
 	lfs	= new Lfs({'basePath': that.options.routerOptions.basePath});
@@ -71,8 +66,8 @@ function Api(options, cb) {
 	// Instantiate the router
 	that.router	= new Router(that.options.routerOptions);
 
-	// instantiate the request parser
-	that.reqParser = new ReqParser(that.options.reqParserOptions || { 'storage': 'memory' });
+	// Instantiate the request parser
+	that.reqParser	= new ReqParser(that.options.reqParserOptions);
 
 	that.middleware.push(function (req, res, cb) {
 		that.reqParser.parse(req, res, cb);
@@ -163,24 +158,21 @@ function Api(options, cb) {
 	that.middleware.push(function (req, res, cb) {
 		that.reqParser.clean(req, res, cb);
 	});
-
-	cb();
 };
 
 Api.prototype.start = function start(cb) {
-	const logPrefix = topLogPrefix + 'start() - ',
-		that = this;
+	const	that	= this;
 
-	that.lBase = new LBase(that.options.lBaseOptions, cb);
+	that.lBase	= new LBase(that.options.lBaseOptions, cb);
 
 	that.lBase.on('error', function (err, req, res) {
-		res.statusCode = 500;
+		res.statusCode	= 500;
 		res.end('"Internal server error: ' + err.message + '"');
 	});
 };
 
 Api.prototype.stop = function (cb) {
-	const that = this;
+	const	that	= this;
 	that.lBase.httpServer.close(cb);
 };
 
