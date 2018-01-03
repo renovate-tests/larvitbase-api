@@ -22,7 +22,8 @@ let api;
 
 api = new Api({
 	'lBaseOptions':	{'httpOptions': 8001},	// sent to larvitbase
-	'routerOptions':	{}	// sent to larvitrouter
+	'routerOptions':	{},	// sent to larvitrouter
+	'reqParserOptions': {}, // sent to larvitReqParser
 });
 
 // Exposed stuff

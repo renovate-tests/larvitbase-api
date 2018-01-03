@@ -1,6 +1,7 @@
 'use strict';
 
 const	topLogPrefix = 'larvitbase-api: ./index.js: ',
+	ReqParser	= require('larvitreqparser'),
 	Router	= require('larvitrouter'),
 	semver	= require('semver'),
 	LBase	= require('larvitbase'),
@@ -30,7 +31,6 @@ function Api(options, cb) {
 	}
 
 	that.options	= options;
-
 
 	if ( ! that.options.routerOptions)	{ that.options.routerOptions	= {};	}
 	if ( ! that.options.routerOptions.controllersPath)	{ that.options.routerOptions.controllersPath	= 'controllers';	}
@@ -73,6 +73,13 @@ function Api(options, cb) {
 
 	// Instantiate the router
 	that.router	= new Router(that.options.routerOptions);
+
+	// instantiate the request parser
+	that.reqParser = new ReqParser(that.options.reqParserOptions || { 'storage': 'memory' });
+
+	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+		that.reqParser.parse(req, res, cb);
+	});
 
 	// Default to the latest version of the API
 	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
@@ -153,6 +160,11 @@ function Api(options, cb) {
 
 		res.end(sendData);
 		cb();
+	});
+
+	// clean up if file storage is used by parser
+	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+		that.reqParser.clean(req, res, cb);
 	});
 
 	that.lBase = new LBase(that.options.lBaseOptions, cb);
