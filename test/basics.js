@@ -18,9 +18,14 @@ test('Get a response from a controller', function (t) {
 		}, cb);
 	});
 
+	tasks.push(function (cb) {
+		api.start(cb);
+	});
+
 	// Try 200 request
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.lBase.httpServer.address().port + '/webb', function (err, response, body) {
+			console.log('-----------');
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"v": "1.3.2"}');
@@ -30,7 +35,7 @@ test('Get a response from a controller', function (t) {
 
 	// Close server
 	tasks.push(function (cb) {
-		api.lBase.httpServer.close(cb);
+		api.stop(cb);
 	});
 
 	async.series(tasks, function (err) {

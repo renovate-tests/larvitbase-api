@@ -11,8 +11,7 @@ const	topLogPrefix = 'larvitbase-api: ./index.js: ',
 	fs	= require('fs');
 
 function Api(options, cb) {
-	const	logPrefix	 = topLogPrefix + 'Api() - ',
-		that	= this;
+	const	that	= this;
 
 	let	controllersFullPath,
 		lfs;
@@ -39,9 +38,7 @@ function Api(options, cb) {
 
 	if ( ! that.options.lBaseOptions) that.options.lBaseOptions = {};
 
-	if ( ! Array.isArray(that.options.lBaseOptions.middleware)) {
-		that.options.lBaseOptions.middleware	= [];
-	}
+	that.middleware = options.lBaseOptions.middleware || [];
 
 	// Instantiate lfs
 	lfs	= new Lfs({'basePath': that.options.routerOptions.basePath});
@@ -77,12 +74,12 @@ function Api(options, cb) {
 	// instantiate the request parser
 	that.reqParser = new ReqParser(that.options.reqParserOptions || { 'storage': 'memory' });
 
-	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+	that.middleware.push(function (req, res, cb) {
 		that.reqParser.parse(req, res, cb);
 	});
 
 	// Default to the latest version of the API
-	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+	that.middleware.push(function (req, res, cb) {
 		if ( ! semver.valid(req.url.split('/')[1] + '.0') && that.apiVersions.length) {
 			req.url	= '/' + that.apiVersions[that.apiVersions.length - 1] + req.url;
 		}
@@ -92,7 +89,7 @@ function Api(options, cb) {
 	});
 
 	// Route the request
-	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+	that.middleware.push(function (req, res, cb) {
 		let	readmeFile	= false;
 
 		// Check if url is matching a directory that contains a README.md
@@ -134,7 +131,7 @@ function Api(options, cb) {
 	});
 
 	// Run controller
-	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+	that.middleware.push(function (req, res, cb) {
 		if ( ! req.routed.controllerFullPath) {
 			res.statusCode	= 404;
 			res.data	= '"URL endpoint not found"';
@@ -145,7 +142,7 @@ function Api(options, cb) {
 	});
 
 	// Output JSON to client
-	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+	that.middleware.push(function (req, res, cb) {
 		let	sendData	= res.data;
 
 		res.setHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -163,9 +160,16 @@ function Api(options, cb) {
 	});
 
 	// clean up if file storage is used by parser
-	that.options.lBaseOptions.middleware.push(function (req, res, cb) {
+	that.middleware.push(function (req, res, cb) {
 		that.reqParser.clean(req, res, cb);
 	});
+
+	cb();
+};
+
+Api.prototype.start = function start(cb) {
+	const logPrefix = topLogPrefix + 'start() - ',
+		that = this;
 
 	that.lBase = new LBase(that.options.lBaseOptions, cb);
 
@@ -173,6 +177,11 @@ function Api(options, cb) {
 		res.statusCode = 500;
 		res.end('"Internal server error: ' + err.message + '"');
 	});
-}
+};
+
+Api.prototype.stop = function (cb) {
+	const that = this;
+	that.lBase.httpServer.close(cb);
+};
 
 exports = module.exports = Api;
