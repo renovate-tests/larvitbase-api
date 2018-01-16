@@ -3,7 +3,7 @@
 
 # larvitbase-api
 
-REST http API baes framework based on [larvitbase](https://github.com/larvit/larvitbase)
+REST http API base framework based on [larvitbase](https://github.com/larvit/larvitbase)
 
 ## Installation
 
