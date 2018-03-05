@@ -56,7 +56,7 @@ function Api(options) {
 		});
 	} else {
 		that.apiVersions	= [];
-		log.warn(logPrefix + 'No controllers folder detected');
+		log.info(logPrefix + 'No controllers folder detected');
 	}
 
 	// Sort apiVersions
