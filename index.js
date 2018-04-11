@@ -11,8 +11,8 @@ const	topLogPrefix = 'larvitbase-api: ./index.js: ',
 	fs	= require('fs');
 
 function Api(options) {
-	const	that	= this,
-		logPrefix = topLogPrefix + 'Api() - ';
+	const	logPrefix	= topLogPrefix + 'Api() - ',
+		that	= this;
 
 	let	controllersFullPath,
 		lfs;
@@ -42,7 +42,7 @@ function Api(options) {
 	// Resolve apiVersions
 	controllersFullPath	= path.join(that.options.routerOptions.basePath, that.options.routerOptions.controllersPath);
 	if (fs.existsSync(controllersFullPath)) {
-		that.apiVersions	= fs.readdirSync(controllersFullPath).filter(function (file) {
+		that.apiVersions = fs.readdirSync(controllersFullPath).filter(function (file) {
 			let	versionStr	= semver.clean(String(file) + '.0');
 
 			if (
