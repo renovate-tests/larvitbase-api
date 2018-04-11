@@ -1,6 +1,6 @@
 'use strict';
 
-const	topLogPrefix = 'larvitbase-api: ./index.js: ',
+const	topLogPrefix	= 'larvitbase-api: ./index.js: ',
 	ReqParser	= require('larvitreqparser'),
 	Router	= require('larvitrouter'),
 	semver	= require('semver'),
