@@ -16,14 +16,14 @@ npm i larvitbase-api
 In the file index.js:
 
 ```javascript
-const Api = require('larvitbase-api');
+const	Api	= require('larvitbase-api');
 
-let api;
+let	api;
 
 api = new Api({
 	'lBaseOptions':	{'httpOptions': 8001},	// sent to larvitbase
 	'routerOptions':	{},	// sent to larvitrouter
-	'reqParserOptions': {}, // sent to larvitReqParser
+	'reqParserOptions':	{},	// sent to larvitReqParser
 });
 
 api.start(function (err) {}); // callback
@@ -57,6 +57,14 @@ It is also possible to request a specific version fo the API. Consider:
 * /foo -> controllers/1.2/foo.js
 * /1.2/foo -> controllers/1.2/foo.js
 * /1.0/foo -> controllers/1.0/foo.js
+
+More detailed examples on controllers in node modules
+
+* /foo -> (does not exist controllers/foo.js or controllers/X.X/foo.js) -> node_modules/some_module/controllers/X.X/foo.js (where X.X is the highest version number)
+or
+* /foo -> (does not exist controllers/foo.js or controllers/X.X/foo.js) -> node_modules/some_module/controllers/foo.js
+
+If any controller exists, in any version in the local app, that controller will have priority over all node modules.
 
 #### Valid versions
 
