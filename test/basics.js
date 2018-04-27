@@ -122,6 +122,16 @@ test('Get controller without version mappings', function (t) {
 		});
 	});
 
+	// try another to test the cache
+	tasks.push(function (cb) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/foo', function (err, response, body) {
+			if (err) return cb(err);
+			t.equal(response.statusCode,	200);
+			t.equal(body,	'{"foo":"bar"}');
+			cb();
+		});
+	});
+
 	// Close server
 	tasks.push(function (cb) {
 		api.stop(cb);
@@ -227,6 +237,16 @@ test('Start without options', function (t) {
 	});
 
 	// Try 200 request for README.md
+	tasks.push(function (cb) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/', function (err, response, body) {
+			if (err) return cb(err);
+			t.equal(response.statusCode,	200);
+			t.equal(body,	fs.readFileSync(__dirname + '/../README.md').toString());
+			cb();
+		});
+	});
+
+	// one more to get cached version
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.lBase.httpServer.address().port + '/', function (err, response, body) {
 			if (err) return cb(err);

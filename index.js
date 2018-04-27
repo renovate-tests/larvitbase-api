@@ -15,7 +15,10 @@ function Api(options) {
 		that	= this;
 
 	let	controllersFullPath,
-		lfs;
+		lfs,
+		altControllerPaths;
+
+	that.routeCache = {};
 
 	if ( ! options) {
 		options	= {};
@@ -38,6 +41,8 @@ function Api(options) {
 
 	// Instantiate lfs
 	lfs	= new Lfs({'basePath': that.options.routerOptions.basePath});
+
+	altControllerPaths = lfs.getPathsSync('controllers');
 
 	// Resolve apiVersions
 	controllersFullPath	= path.join(that.options.routerOptions.basePath, that.options.routerOptions.controllersPath);
@@ -88,6 +93,25 @@ function Api(options) {
 	that.middleware.push(function (req, res, cb) {
 		let	readmeFile	= false;
 
+		// use cache first
+		if (that.routeCache[req.urlBase]) {
+			const rc = that.routeCache[req.urlBase];
+
+			if (rc.type === 'readme') {
+				res.setHeader('Content-Type', 'text/markdown; charset=UTF-8');
+				res.end(rc.data);
+				return;
+			} else {
+				req.routed = that.routeCache[req.urlBase];
+				return cb();
+			}
+		}
+
+		// clean cache if more than 1000 entries to avoid ddos or such
+		if (Object.keys(that.routeCache).length > 1000) {
+			that.routeCache = {};
+		}
+
 		// Check if url is matching a directory that contains a README.md
 
 		// Request directly on root, existing README.md in root
@@ -116,13 +140,46 @@ function Api(options) {
 			res.setHeader('Content-Type', 'text/markdown; charset=UTF-8');
 			return fs.readFile(readmeFile, function (err, data) {
 				if (err) return cb(err);
+
+				that.routeCache[req.urlBase] = {
+					'type': 'readme',
+					'data': data
+				};
 				res.end(data);
 			});
 		}
 
 		that.router.resolve(req.urlBase, function (err, result) {
-			req.routed	= result;
-			cb(err);
+			if (err) return cb(err);
+
+			// if nothing is found, check in the alternative controller paths
+			if (Object.keys(result).length === 0) {
+				for (let i = 0; altControllerPaths[i] !==  undefined; i ++) {
+					let stat;
+
+					if ( ! fs.existsSync(altControllerPaths[i])) continue;
+
+					stat = fs.statSync(altControllerPaths[i]);
+					
+					if (stat.isDirectory()) {
+						if (fs.existsSync(path.join(altControllerPaths[i], req.urlBase.replace(req.apiVersion + '/', '')) + '.js')) {
+							req.routed = { 
+								'controllerFullPath': path.join(altControllerPaths[i], req.urlBase.replace(req.apiVersion + '/', '')) + '.js',
+								'controllerPath': req.urlBase
+							};
+							that.routeCache[req.urlBase] = req.routed; // add to cache
+							break;
+						}
+					}
+				}
+			} 
+			
+			if ( ! req.routed) {
+				that.routeCache[req.urlBase] = result;
+				req.routed = result;
+			}
+
+			cb();
 		});
 	});
 
