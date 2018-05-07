@@ -7,7 +7,7 @@ const	request	= require('request'),
 	Api	= require(__dirname + '/../index.js'),
 	testEnvPath	= tmpdir + '/test_environment';
 
-test('User controller from a dependency', function (t) {
+test('Use a controller from a dependency', function (t) {
 	const	tasks	= [];
 
 	let	api;
@@ -26,10 +26,9 @@ test('User controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/woo', function (err, response, body) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/woo', function (err, response) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	200);
-			t.equal(body,	'{"woo":"untz"}');
+			t.equal(response.statusCode,	404);
 			cb();
 		});
 	});
@@ -44,9 +43,19 @@ test('User controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/boo', function (err, response) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/boo', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	404);
+			t.equal(response.statusCode,	200);
+			t.equal(JSON.parse(body).version, '1.0');
+			cb();
+		});
+	});
+
+	tasks.push(function (cb) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/v1.0/boo', function (err, response, body) {
+			if (err) return cb(err);
+			t.equal(response.statusCode,	200);
+			t.equal(JSON.parse(body).version, '1.0');
 			cb();
 		});
 	});
@@ -56,6 +65,52 @@ test('User controller from a dependency', function (t) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"woo":"buntz"}');
+			cb();
+		});
+	});
+
+	// Close server
+	tasks.push(function (cb) {
+		api.stop(cb);
+	});
+
+	async.series(tasks, function (err) {
+		if (err) throw err;
+		t.end();
+	});
+});
+
+test('User controller from a dependency, with version', function (t) {
+	const	tasks	= [];
+
+	let	api;
+
+	// Start server
+	tasks.push(function (cb) {
+		api = new Api({
+			'routerOptions':	{'basePath': testEnvPath + '/6'}
+		});
+
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
+	});
+
+	tasks.push(function (cb) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/foo', function (err, response, body) {
+			if (err) return cb(err);
+			t.equal(response.statusCode,	200);
+			t.equal(JSON.parse(body).version, '1.2');
+			cb();
+		});
+	});
+
+	tasks.push(function (cb) {
+		request('http://localhost:' + api.lBase.httpServer.address().port + '/boo', function (err, response) {
+			if (err) return cb(err);
+			t.equal(response.statusCode,	404);
 			cb();
 		});
 	});

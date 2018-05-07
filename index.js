@@ -162,9 +162,11 @@ function Api(options) {
 					stat = fs.statSync(altControllerPaths[i]);
 					
 					if (stat.isDirectory()) {
-						if (fs.existsSync(path.join(altControllerPaths[i], req.urlBase.replace(req.apiVersion + '/', '')) + '.js')) {
+
+						// check if file exists without version no in the controllers path
+						if (fs.existsSync(path.join(altControllerPaths[i], req.urlBase) + '.js')) {
 							req.routed = { 
-								'controllerFullPath': path.join(altControllerPaths[i], req.urlBase.replace(req.apiVersion + '/', '')) + '.js',
+								'controllerFullPath': path.join(altControllerPaths[i], req.urlBase) + '.js',
 								'controllerPath': req.urlBase
 							};
 							that.routeCache[req.urlBase] = req.routed; // add to cache
