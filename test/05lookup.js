@@ -1,9 +1,11 @@
 'use strict';
 
 const	request	= require('request'),
+	tmpdir	= require('os').tmpdir(),
 	async	= require('async'),
 	test	= require('tape'),
-	Api	= require(__dirname + '/../index.js');
+	Api	= require(__dirname + '/../index.js'),
+	testEnvPath	= tmpdir + '/test_environment';
 
 test('User controller from a dependency', function (t) {
 	const	tasks	= [];
@@ -13,7 +15,7 @@ test('User controller from a dependency', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/5'}
+			'routerOptions':	{'basePath': testEnvPath + '/5'}
 		});
 
 		cb();

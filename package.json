@@ -42,7 +42,9 @@
     "freeport": "^1.0.5",
     "istanbul": "^0.4.5",
     "request": "^2.83.0",
+    "rimraf": "^2.6.2",
     "tape": "^4.8.0",
-    "tape-eslint": "^1.2.1"
+    "tape-eslint": "^1.2.1",
+    "unzip": "^0.1.11"
   }
 }

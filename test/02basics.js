@@ -1,10 +1,12 @@
 'use strict';
 
 const	request	= require('request'),
+	tmpdir	= require('os').tmpdir(),
 	async	= require('async'),
 	test	= require('tape'),
 	Api	= require(__dirname + '/../index.js'),
-	fs	= require('fs');
+	fs	= require('fs'),
+	testEnvPath	= tmpdir + '/test_environment';
 
 test('Get a response from a controller', function (t) {
 	const	tasks	= [];
@@ -14,7 +16,7 @@ test('Get a response from a controller', function (t) {
 	// Initialize api
 	tasks.push(function (cb) {
 		api	= new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 		cb();
 	});
@@ -52,7 +54,7 @@ test('Get a response from a controller, ignoring url parameters', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();
@@ -97,7 +99,7 @@ test('Get controller without version mappings', function (t) {
 			},
 
 			'routerOptions': {
-				'basePath':	__dirname + '/../test_environment/2',
+				'basePath': testEnvPath + '/2',
 
 				// We do this explicitly to get better test coverage
 				'controllersPath':	'controllers',
@@ -151,7 +153,7 @@ test('Specific version request', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();
@@ -190,7 +192,7 @@ test('Get specific version of README.md', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();
