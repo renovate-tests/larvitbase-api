@@ -2,9 +2,11 @@
 
 const	freeport	= require('freeport'),
 	request	= require('request'),
+	tmpdir	= require('os').tmpdir(),
 	async	= require('async'),
 	test	= require('tape'),
-	Api	= require(__dirname + '/../index.js');
+	Api	= require(__dirname + '/../index.js'),
+	testEnvPath	= tmpdir + '/test_environment';
 
 test('Get README.md on /', function (t) {
 	const	tasks	= [];
@@ -14,7 +16,7 @@ test('Get README.md on /', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();
@@ -63,7 +65,7 @@ test('Get 200 OK and hard coded string when README.md not found', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			'lBaseOptions':	{'httpOptions': port},
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/2'}
+			'routerOptions':	{'basePath': testEnvPath + '/2'}
 		});
 
 		cb();
@@ -102,7 +104,7 @@ test('Get specific version of README.md', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();

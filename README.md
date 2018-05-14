@@ -64,7 +64,34 @@ More detailed examples on controllers in node modules
 or
 * /foo -> (does not exist controllers/foo.js or controllers/X.X/foo.js) -> node_modules/some_module/controllers/foo.js
 
-If any controller exists, in any version in the local app, that controller will have priority over all node modules.
+If any controller exists, in any version in the local app, that controller will have priority over all node modules. If a specific version is requested, that version is all that will be searched for in modules. To find a controller in a module of a specific version this version must be present in the local app, even if the directory is empty.
+
+For example, when folder structure that looks like this:
+
+<pre>
+app
+|__ controllers
+|__ node_modules
+	|__ dependency
+		|__ controllers
+			|__ v1.0
+				|__ bar.js
+</pre>
+
+Requests for /bar and /v1.0/bar will return a 404. However, if we create a v1.0 directory in our apps controllers directory (see below), bar.js will be successfully resolved.
+
+<pre>
+app
+|__ controllers
+|	|__ v1.0
+|__ node_modules
+	|__ dependency
+		|__ controllers
+			|__ v1.0
+				|__ bar.js
+</pre>
+
+Likewise, if any version of the api exists in the local app, unversioned controllers in modules will not be resolved.
 
 #### Valid versions
 

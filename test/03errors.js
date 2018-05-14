@@ -1,10 +1,12 @@
 'use strict';
 
 const	request	= require('request'),
+	tmpdir	= require('os').tmpdir(),
 	async	= require('async'),
 	test	= require('tape'),
 	Api	= require(__dirname + '/../index.js'),
-	fs	= require('fs');
+	fs	= require('fs'),
+	testEnvPath	= tmpdir + '/test_environment';
 
 test('404 for old version', function (t) {
 	const	tasks	= [];
@@ -14,7 +16,7 @@ test('404 for old version', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();
@@ -53,7 +55,7 @@ test('404 for non existing url', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/1'}
+			'routerOptions':	{'basePath': testEnvPath + '/1'}
 		});
 
 		cb();
@@ -92,7 +94,7 @@ test('500 error when controller is borked', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/2'}
+			'routerOptions':	{'basePath': testEnvPath + '/2'}
 		});
 		cb(); // Running this outside to get better test coverage
 	});
@@ -129,14 +131,14 @@ test('500 error if something is wrong with the README file', function (t) {
 
 	// Fuck up the permissions of the README file
 	tasks.push(function(cb) {
-		fs.chmodSync(__dirname + '/../test_environment/4/lurk/README.md', '000');
+		fs.chmodSync(testEnvPath + '/4/lurk/README.md', '000');
 		cb();
 	});
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/4'}
+			'routerOptions':	{'basePath': testEnvPath + '/4'}
 		});
 
 		cb();
@@ -163,7 +165,7 @@ test('500 error if something is wrong with the README file', function (t) {
 
 	// Change back ok permissions to the README file
 	tasks.push(function(cb) {
-		fs.chmodSync(__dirname + '/../test_environment/4/lurk/README.md', '644');
+		fs.chmodSync(testEnvPath + '/4/lurk/README.md', '644');
 		cb();
 	});
 
@@ -181,7 +183,7 @@ test('500 error when controller data is circular', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': __dirname + '/../test_environment/2'}
+			'routerOptions':	{'basePath': testEnvPath + '/2'}
 		});
 		cb();
 	});
