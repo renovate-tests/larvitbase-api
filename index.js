@@ -160,12 +160,12 @@ function Api(options) {
 					if ( ! fs.existsSync(altControllerPaths[i])) continue;
 
 					stat = fs.statSync(altControllerPaths[i]);
-					
+
 					if (stat.isDirectory()) {
 
 						// check if file exists without version no in the controllers path
 						if (fs.existsSync(path.join(altControllerPaths[i], req.urlBase) + '.js')) {
-							req.routed = { 
+							req.routed = {
 								'controllerFullPath': path.join(altControllerPaths[i], req.urlBase) + '.js',
 								'controllerPath': req.urlBase
 							};
@@ -174,8 +174,8 @@ function Api(options) {
 						}
 					}
 				}
-			} 
-			
+			}
+
 			if ( ! req.routed) {
 				that.routeCache[req.urlBase] = result;
 				req.routed = result;

@@ -22,16 +22,16 @@ test('Extract test environment to tmp folder', function (t) {
 	}
 
 	tasks.push(function (cb) {
-		let readStream;
+		let	readStream;
 
-		readStream = fs.createReadStream(__dirname + '/../test_environment.zip').pipe(unzip.Extract({'path': tmpdir}));
+		readStream	= fs.createReadStream(__dirname + '/../test_environment.zip').pipe(unzip.Extract({'path': tmpdir}));
 
 		readStream.on('close', function () {
 			t.equal(fs.existsSync(testEnvPath), true);
 			t.equal(fs.lstatSync(testEnvPath).isDirectory(), true);
 			cb();
 		});
-	
+
 		readStream.on('error', function (err) {
 			if (err) throw err;
 		});
