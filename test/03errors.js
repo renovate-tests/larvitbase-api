@@ -130,7 +130,7 @@ test('500 error if something is wrong with the README file', function (t) {
 	let	api;
 
 	// Fuck up the permissions of the README file
-	tasks.push(function(cb) {
+	tasks.push(function (cb) {
 		fs.chmodSync(testEnvPath + '/4/lurk/README.md', '000');
 		cb();
 	});
@@ -164,7 +164,7 @@ test('500 error if something is wrong with the README file', function (t) {
 	});
 
 	// Change back ok permissions to the README file
-	tasks.push(function(cb) {
+	tasks.push(function (cb) {
 		fs.chmodSync(testEnvPath + '/4/lurk/README.md', '644');
 		cb();
 	});
