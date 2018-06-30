@@ -26,7 +26,7 @@ test('Use a controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/woo', function (err, response) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/woo', function (err, response) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	404);
 			cb();
@@ -34,7 +34,7 @@ test('Use a controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/foo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"foo":"bar"}');
@@ -43,7 +43,7 @@ test('Use a controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/boo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/boo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(JSON.parse(body).version, '1.0');
@@ -52,7 +52,7 @@ test('Use a controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/v1.0/boo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/v1.0/boo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(JSON.parse(body).version, '1.0');
@@ -61,7 +61,7 @@ test('Use a controller from a dependency', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/v1.0/schloo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/v1.0/schloo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"woo":"buntz"}');
@@ -99,7 +99,7 @@ test('User controller from a dependency, with version', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/foo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(JSON.parse(body).version, '1.2');
@@ -108,7 +108,7 @@ test('User controller from a dependency, with version', function (t) {
 	});
 
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/boo', function (err, response) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/boo', function (err, response) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	404);
 			cb();

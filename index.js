@@ -31,13 +31,13 @@ function Api(options) {
 	if ( ! that.options.routerOptions.basePath)	{ that.options.routerOptions.basePath	= process.cwd();	}
 	if ( ! Array.isArray(that.options.routerOptions.routes))	{ that.options.routerOptions.routes	= [];	}
 
-	if ( ! that.options.lBaseOptions) that.options.lBaseOptions	= {};
+	if ( ! that.options.baseOptions) that.options.baseOptions	= {};
 
-	if ( ! Array.isArray(options.lBaseOptions.middleware)) {
-		options.lBaseOptions.middleware	= [];
+	if ( ! Array.isArray(options.baseOptions.middleware)) {
+		options.baseOptions.middleware	= [];
 	}
 
-	that.middleware	= options.lBaseOptions.middleware;
+	that.middleware	= options.baseOptions.middleware;
 
 	// Instantiate lfs
 	lfs	= new Lfs({'basePath': that.options.routerOptions.basePath});
@@ -223,9 +223,11 @@ function Api(options) {
 Api.prototype.start = function start(cb) {
 	const	that	= this;
 
-	that.lBase	= new LBase(that.options.lBaseOptions, cb);
+	that.base	= new LBase(that.options.baseOptions);
 
-	that.lBase.on('error', function (err, req, res) {
+	that.base.start(cb);
+
+	that.base.on('error', function (err, req, res) {
 		res.statusCode	= 500;
 		res.end('"Internal server error: ' + err.message + '"');
 	});
@@ -233,7 +235,7 @@ Api.prototype.start = function start(cb) {
 
 Api.prototype.stop = function (cb) {
 	const	that	= this;
-	that.lBase.httpServer.close(cb);
+	that.base.httpServer.close(cb);
 };
 
 exports = module.exports = Api;

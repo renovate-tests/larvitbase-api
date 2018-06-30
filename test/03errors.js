@@ -28,7 +28,7 @@ test('404 for old version', function (t) {
 
 	// Try 404 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/wepp', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/wepp', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	404);
 			t.equal(body,	'"URL endpoint not found"');
@@ -67,7 +67,7 @@ test('404 for non existing url', function (t) {
 
 	// Try 404 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/turbojugend', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/turbojugend', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	404);
 			t.equal(body,	'"URL endpoint not found"');
@@ -105,7 +105,7 @@ test('500 error when controller is borked', function (t) {
 
 	// Try broken request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/broken', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/broken', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	500);
 			t.equal(body,	'"Internal server error: this should happend"');
@@ -150,7 +150,7 @@ test('500 error if something is wrong with the README file', function (t) {
 
 	// Try broken request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/lurk', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/lurk', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	500);
 			t.equal(body.substring(0, 49),	'"Internal server error: EACCES: permission denied');
@@ -194,7 +194,7 @@ test('500 error when controller data is circular', function (t) {
 
 	// Try broken request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/circular', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/circular', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	500);
 			t.equal(body,	'"Internal server error: Converting circular structure to JSON"');

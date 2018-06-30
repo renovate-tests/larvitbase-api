@@ -21,7 +21,7 @@ const	Api	= require('larvitbase-api');
 let	api;
 
 api = new Api({
-	'lBaseOptions':	{'httpOptions': 8001},	// sent to larvitbase
+	'baseOptions':	{'httpOptions': 8001},	// sent to larvitbase
 	'routerOptions':	{},	// sent to larvitrouter
 	'reqParserOptions':	{},	// sent to larvitReqParser
 });
@@ -29,7 +29,7 @@ api = new Api({
 api.start(function (err) {}); // callback
 
 // Exposed stuff
-//api.lBase	- larvitbase instance
+//api.base	- larvitbase instance
 //api.options	- the options sent in when instanciated
 //api.apiVersions	- resolved versions of the API (subfolders to controllers folder)
 

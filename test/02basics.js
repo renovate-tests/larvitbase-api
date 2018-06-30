@@ -27,7 +27,7 @@ test('Get a response from a controller', function (t) {
 
 	// Try 200 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/webb', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/webb', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"v": "1.3.2"}');
@@ -66,7 +66,7 @@ test('Get a response from a controller, ignoring url parameters', function (t) {
 
 	// Try 200 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/webb?boll', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/webb?boll', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"v": "1.3.2"}');
@@ -94,7 +94,7 @@ test('Get controller without version mappings', function (t) {
 	tasks.push(function (cb) {
 		api = new Api({
 			// To get better test coverage, send in specific middleware array
-			'lBaseOptions': {
+			'baseOptions': {
 				'middleware':	[]
 			},
 
@@ -116,7 +116,7 @@ test('Get controller without version mappings', function (t) {
 
 	// Try 200 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/foo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"foo":"bar"}');
@@ -126,7 +126,7 @@ test('Get controller without version mappings', function (t) {
 
 	// try another to test the cache
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/foo', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"foo":"bar"}');
@@ -165,7 +165,7 @@ test('Specific version request', function (t) {
 
 	// Try 200 request
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2/wepp', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/wepp', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'{"v":"0.2.0"}');
@@ -204,7 +204,7 @@ test('Get specific version of README.md', function (t) {
 
 	// Try 200 request for README.md
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/0.2/?dal', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/?dal', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	'This is old 0.2.0\n');
@@ -240,7 +240,7 @@ test('Start without options', function (t) {
 
 	// Try 200 request for README.md
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	fs.readFileSync(__dirname + '/../README.md').toString());
@@ -250,7 +250,7 @@ test('Start without options', function (t) {
 
 	// one more to get cached version
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	fs.readFileSync(__dirname + '/../README.md').toString());
@@ -286,7 +286,7 @@ test('Start without options or cb', function (t) {
 
 	// Try 200 request for README.md
 	tasks.push(function (cb) {
-		request('http://localhost:' + api.lBase.httpServer.address().port + '/', function (err, response, body) {
+		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
 			if (err) return cb(err);
 			t.equal(response.statusCode,	200);
 			t.equal(body,	fs.readFileSync(__dirname + '/../README.md').toString());
