@@ -1,6 +1,6 @@
 {
   "name": "larvitbase-api",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "API framework based on larvitbase",
   "main": "index.js",
   "scripts": {
@@ -27,12 +27,12 @@
   },
   "homepage": "https://github.com/larvit/larvitbase-api#readme",
   "dependencies": {
-    "larvitbase": "^3.0.0",
-    "larvitfs": "^2.0.3",
-    "larvitrouter": "^2.0.0",
-    "larvitreqparser": "^0.1.0",
+    "larvitbase": "^3.1.0",
+    "larvitfs": "^2.3.0",
+    "larvitreqparser": "^0.2.0",
+    "larvitrouter": "^3.0.0",
+    "larvitutils": "^2.1.0",
     "semver": "^5.4.1",
-    "winston": "^2.4.0",
     "url": "^0.11.0"
   },
   "devDependencies": {

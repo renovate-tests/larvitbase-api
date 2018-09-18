@@ -304,3 +304,41 @@ test('Start without options or cb', function (t) {
 		t.end();
 	});
 });
+
+
+test('Start without log in options sets log in router, reqParser and base', function (t) {
+	const tasks = [],
+		LUtils = require('larvitutils'),
+		lUtils = new LUtils(),
+		log = new lUtils.Log({'logLevel': 'info'});
+
+	let	api;
+
+	// Start server
+	tasks.push(function (cb) {
+		api = new Api({'log': log});
+		cb();
+	});
+
+	tasks.push(function (cb) {
+		api.start(cb);
+	});
+
+	tasks.push(function (cb) {
+		t.strictEqual(api.log, log);
+		t.strictEqual(api.router.log, log);
+		t.strictEqual(api.reqParser.log, log);
+		t.strictEqual(api.base.log, log);
+		cb();
+	});
+
+	// Close server
+	tasks.push(function (cb) {
+		api.stop(cb);
+	});
+
+	async.series(tasks, function (err) {
+		if (err) throw err;
+		t.end();
+	});
+});

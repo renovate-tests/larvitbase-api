@@ -7,8 +7,8 @@ const	topLogPrefix	= 'larvitbase-api: ./index.js: ',
 	LBase	= require('larvitbase'),
 	path	= require('path'),
 	Lfs	= require('larvitfs'),
-	log	= require('winston'),
-	fs	= require('fs');
+	fs	= require('fs'),
+	LUtils	= require('larvitutils');
 
 function Api(options) {
 	const	logPrefix	= topLogPrefix + 'Api() - ',
@@ -26,16 +26,28 @@ function Api(options) {
 
 	that.options	= options;
 
+	if ( ! that.options.log) {
+		const lUtils = new LUtils();
+		that.options.log = new lUtils.Log();
+	}
+	that.log = that.options.log;
+
+
 	if ( ! that.options.routerOptions)	{ that.options.routerOptions	= {};	}
 	if ( ! that.options.routerOptions.controllersPath)	{ that.options.routerOptions.controllersPath	= 'controllers';	}
 	if ( ! that.options.routerOptions.basePath)	{ that.options.routerOptions.basePath	= process.cwd();	}
 	if ( ! Array.isArray(that.options.routerOptions.routes))	{ that.options.routerOptions.routes	= [];	}
 
 	if ( ! that.options.baseOptions) that.options.baseOptions	= {};
-
 	if ( ! Array.isArray(options.baseOptions.middleware)) {
 		options.baseOptions.middleware	= [];
 	}
+
+	if (! that.options.reqParserOptions) { that.options.reqParserOptions = {}; }
+
+	if (! that.options.baseOptions.log) { that.options.baseOptions.log = that.log; }
+	if (! that.options.routerOptions.log) { that.options.routerOptions.log = that.log; }
+	if (! that.options.reqParserOptions.log) { that.options.reqParserOptions.log = that.log; }
 
 	that.middleware	= options.baseOptions.middleware;
 
@@ -61,7 +73,7 @@ function Api(options) {
 		});
 	} else {
 		that.apiVersions	= [];
-		log.info(logPrefix + 'No controllers folder detected');
+		that.log.info(logPrefix + 'No controllers folder detected');
 	}
 
 	// Sort apiVersions
