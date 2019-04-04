@@ -1,22 +1,22 @@
 'use strict';
 
-const	request	= require('request'),
-	tmpdir	= require('os').tmpdir(),
-	async	= require('async'),
-	test	= require('tape'),
-	Api	= require(__dirname + '/../index.js'),
-	fs	= require('fs'),
-	testEnvPath	= tmpdir + '/test_environment';
+const request = require('request');
+const tmpdir = require('os').tmpdir();
+const async = require('async');
+const test = require('tape');
+const Api = require(__dirname + '/../index.js');
+const fs = require('fs');
+const testEnvPath = tmpdir + '/test_environment';
 
 test('404 for old version', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/1'}
+			routerOptions: {basePath: testEnvPath + '/1'}
 		});
 
 		cb();
@@ -30,8 +30,8 @@ test('404 for old version', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/wepp', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	404);
-			t.equal(body,	'"URL endpoint not found"');
+			t.equal(response.statusCode, 404);
+			t.equal(body, '"URL endpoint not found"');
 			cb();
 		});
 	});
@@ -48,14 +48,14 @@ test('404 for old version', function (t) {
 });
 
 test('404 for non existing url', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/1'}
+			routerOptions: {basePath: testEnvPath + '/1'}
 		});
 
 		cb();
@@ -69,8 +69,8 @@ test('404 for non existing url', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/turbojugend', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	404);
-			t.equal(body,	'"URL endpoint not found"');
+			t.equal(response.statusCode, 404);
+			t.equal(body, '"URL endpoint not found"');
 			cb();
 		});
 	});
@@ -87,14 +87,14 @@ test('404 for non existing url', function (t) {
 });
 
 test('500 error when controller is borked', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/2'}
+			routerOptions: {basePath: testEnvPath + '/2'}
 		});
 		cb(); // Running this outside to get better test coverage
 	});
@@ -107,8 +107,8 @@ test('500 error when controller is borked', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/broken', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	500);
-			t.equal(body,	'"Internal server error: this should happend"');
+			t.equal(response.statusCode, 500);
+			t.equal(body, '"Internal server error: this should happend"');
 			cb();
 		});
 	});
@@ -125,9 +125,9 @@ test('500 error when controller is borked', function (t) {
 });
 
 test('500 error if something is wrong with the README file', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Fuck up the permissions of the README file
 	tasks.push(function (cb) {
@@ -138,7 +138,7 @@ test('500 error if something is wrong with the README file', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/4'}
+			routerOptions: {basePath: testEnvPath + '/4'}
 		});
 
 		cb();
@@ -152,8 +152,8 @@ test('500 error if something is wrong with the README file', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/lurk', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	500);
-			t.equal(body.substring(0, 49),	'"Internal server error: EACCES: permission denied');
+			t.equal(response.statusCode, 500);
+			t.equal(body.substring(0, 49), '"Internal server error: EACCES: permission denied');
 			cb();
 		});
 	});
@@ -176,14 +176,14 @@ test('500 error if something is wrong with the README file', function (t) {
 });
 
 test('500 error when controller data is circular', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/2'}
+			routerOptions: {basePath: testEnvPath + '/2'}
 		});
 		cb();
 	});
@@ -196,8 +196,8 @@ test('500 error when controller data is circular', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/circular', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	500);
-			t.equal(body,	'"Internal server error: Converting circular structure to JSON"');
+			t.equal(response.statusCode, 500);
+			t.equal(body, '"Internal server error: Converting circular structure to JSON"');
 			cb();
 		});
 	});

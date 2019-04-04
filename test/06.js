@@ -1,22 +1,22 @@
 'use strict';
 
-const	freeport	= require('freeport'),
-	request	= require('request'),
-	tmpdir	= require('os').tmpdir(),
-	async	= require('async'),
-	test	= require('tape'),
-	Api	= require(__dirname + '/../index.js'),
-	testEnvPath	= tmpdir + '/test_environment';
+const freeport = require('freeport');
+const request = require('request');
+const tmpdir = require('os').tmpdir();
+const async = require('async');
+const test = require('tape');
+const Api = require(__dirname + '/../index.js');
+const testEnvPath = tmpdir + '/test_environment';
 
 test('Get README.md on /', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/1'}
+			routerOptions: {basePath: testEnvPath + '/1'}
 		});
 
 		cb();
@@ -30,8 +30,8 @@ test('Get README.md on /', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	200);
-			t.equal(body,	'This is it\n');
+			t.equal(response.statusCode, 200);
+			t.equal(body, 'This is it\n');
 			cb();
 		});
 	});
@@ -48,15 +48,15 @@ test('Get README.md on /', function (t) {
 });
 
 test('Get 200 OK and hard coded string when README.md not found', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	port,
-		api;
+	let port;
+	let api;
 
 	// Get random free port to use manually when starting server to test that
 	tasks.push(function (cb) {
 		freeport(function (err, result) {
-			port	= result;
+			port = result;
 			cb(err);
 		});
 	});
@@ -64,8 +64,8 @@ test('Get 200 OK and hard coded string when README.md not found', function (t) {
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'baseOptions':	{'httpOptions': port},
-			'routerOptions':	{'basePath': testEnvPath + '/2'}
+			baseOptions: {httpOptions: port},
+			routerOptions: {basePath: testEnvPath + '/2'}
 		});
 
 		cb();
@@ -79,8 +79,8 @@ test('Get 200 OK and hard coded string when README.md not found', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + port + '/', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	200);
-			t.equal(body,	'API is up and running. This API contains no README.md');
+			t.equal(response.statusCode, 200);
+			t.equal(body, 'API is up and running. This API contains no README.md');
 			cb();
 		});
 	});
@@ -97,14 +97,14 @@ test('Get 200 OK and hard coded string when README.md not found', function (t) {
 });
 
 test('Get specific version of README.md', function (t) {
-	const	tasks	= [];
+	const tasks = [];
 
-	let	api;
+	let api;
 
 	// Start server
 	tasks.push(function (cb) {
 		api = new Api({
-			'routerOptions':	{'basePath': testEnvPath + '/1'}
+			routerOptions: {basePath: testEnvPath + '/1'}
 		});
 
 		cb();
@@ -118,8 +118,8 @@ test('Get specific version of README.md', function (t) {
 	tasks.push(function (cb) {
 		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/', function (err, response, body) {
 			if (err) return cb(err);
-			t.equal(response.statusCode,	200);
-			t.equal(body,	'This is old 0.2.0\n');
+			t.equal(response.statusCode, 200);
+			t.equal(body, 'This is old 0.2.0\n');
 			cb();
 		});
 	});

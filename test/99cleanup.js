@@ -1,12 +1,12 @@
 'use strict';
 
-const rimraf = require('rimraf'),
-	tmpdir	= require('os').tmpdir(),
-	test	= require('tape'),
-	fs	= require('fs');
+const rimraf = require('rimraf');
+const tmpdir = require('os').tmpdir();
+const test = require('tape');
+const fs = require('fs');
 
 test('Remove test_environment folder', function (t) {
-	const testEnvPath	= tmpdir + '/test_environment';
+	const testEnvPath = tmpdir + '/test_environment';
 
 	if (fs.existsSync(testEnvPath)) {
 		rimraf(testEnvPath, function (err) {

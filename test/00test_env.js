@@ -1,15 +1,15 @@
 'use strict';
 
-const	fs	= require('fs'),
-	tmpdir	= require('os').tmpdir(),
-	rimraf	= require('rimraf'),
-	unzip	= require('unzip'),
-	async	= require('async'),
-	test	= require('tape');
+const fs = require('fs');
+const tmpdir = require('os').tmpdir();
+const rimraf = require('rimraf');
+const unzip = require('unzip');
+const async = require('async');
+const test = require('tape');
 
 test('Extract test environment to tmp folder', function (t) {
-	const testEnvPath = tmpdir + '/test_environment',
-		tasks	= [];
+	const testEnvPath = tmpdir + '/test_environment';
+	const tasks = [];
 
 	if (fs.existsSync(testEnvPath) && fs.lstatSync(testEnvPath).isDirectory) {
 		tasks.push(function (cb) {
@@ -22,9 +22,10 @@ test('Extract test environment to tmp folder', function (t) {
 	}
 
 	tasks.push(function (cb) {
-		let	readStream;
+		let readStream;
 
-		readStream	= fs.createReadStream(__dirname + '/../test_environment.zip').pipe(unzip.Extract({'path': tmpdir}));
+
+		readStream = fs.createReadStream(__dirname + '/../test_environment.zip').pipe(unzip.Extract({path: tmpdir})); // eslint-disable-line
 
 		readStream.on('close', function () {
 			t.equal(fs.existsSync(testEnvPath), true);
