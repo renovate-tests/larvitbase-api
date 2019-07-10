@@ -167,6 +167,13 @@ function Api(options) {
 					stat = fs.statSync(altControllerPaths[i]);
 
 					if (stat.isDirectory()) {
+						const urlBase = path.join(altControllerPaths[i], req.urlBase);
+
+						// Security check for relative paths above the alternative controller path
+						if (!urlBase.startsWith(altControllerPaths[1])) {
+							log.info(logPrefix + 'SECURITY! Intruder detection, path above the controller path is trying to be obtained, via: "' + req.urlBase + '"');
+							break;
+						}
 
 						// Check if file exists without version no in the controllers path
 						if (fs.existsSync(path.join(altControllerPaths[i], req.urlBase) + '.js')) {
