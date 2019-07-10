@@ -4,7 +4,7 @@
   "description": "API framework based on larvitbase",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/tape/bin/tape ./test/*"
+    "test": "NODE_LOG_LVL=none ./node_modules/.bin/tape ./test/*"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "larvitfs": "2.3.1",
     "larvitreqparser": "0.4.5",
     "larvitrouter": "3.0.1",
-    "larvitutils": "2.2.0",
+    "larvitutils": "2.3.0",
     "semver": "6.2.0",
     "url": "0.11.0"
   },
@@ -44,7 +44,6 @@
     "request": "2.88.0",
     "rimraf": "2.6.3",
     "tape": "4.11.0",
-    "tape-eslint": "1.2.1",
-    "unzip": "0.1.11"
+    "tape-eslint": "1.2.1"
   }
 }

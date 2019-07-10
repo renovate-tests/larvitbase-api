@@ -1,33 +1,26 @@
 'use strict';
 
 const request = require('request');
-const tmpdir = require('os').tmpdir();
+const path = require('path');
 const async = require('async');
 const test = require('tape');
 const Api = require(__dirname + '/../index.js');
 const fs = require('fs');
-const testEnvPath = tmpdir + '/test_environment';
+const testEnvPath = path.normalize(__dirname + '/../test_environment');
 
-test('Get a response from a controller', function (t) {
+test('Get a response from a controller', t => {
 	const tasks = [];
-
-	let api;
-
-	// Initialize api
-	tasks.push(function (cb) {
-		api = new Api({
-			routerOptions: {basePath: testEnvPath + '/1'}
-		});
-		cb();
+	const api = new Api({
+		routerOptions: { basePath: testEnvPath + '/1' }
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/webb', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/webb', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"v": "1.3.2"}');
@@ -36,37 +29,29 @@ test('Get a response from a controller', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Get a response from a controller, ignoring url parameters', function (t) {
+test('Get a response from a controller, ignoring url parameters', t => {
 	const tasks = [];
-
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api({
-			routerOptions: {basePath: testEnvPath + '/1'}
-		});
-
-		cb();
+	const api = new Api({
+		routerOptions: { basePath: testEnvPath + '/1' }
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/webb?boll', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/webb?boll', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"v": "1.3.2"}');
@@ -75,48 +60,40 @@ test('Get a response from a controller, ignoring url parameters', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Get controller without version mappings', function (t) {
+test('Get controller without version mappings', t => {
 	const tasks = [];
+	const api = new Api({
+		// To get better test coverage, send in specific middleware array
+		baseOptions: {
+			middleware: []
+		},
 
-	let api;
+		routerOptions: {
+			basePath: testEnvPath + '/2',
 
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api({
-			// To get better test coverage, send in specific middleware array
-			baseOptions: {
-				middleware: []
-			},
-
-			routerOptions: {
-				basePath: testEnvPath + '/2',
-
-				// We do this explicitly to get better test coverage
-				controllersPath: 'controllers',
-				routes: []
-			}
-		});
-
-		cb();
+			// We do this explicitly to get better test coverage
+			controllersPath: 'controllers',
+			routes: []
+		}
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"foo":"bar"}');
@@ -125,8 +102,8 @@ test('Get controller without version mappings', function (t) {
 	});
 
 	// Try another to test the cache
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"foo":"bar"}');
@@ -135,37 +112,29 @@ test('Get controller without version mappings', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Specific version request', function (t) {
+test('Specific version request', t => {
 	const tasks = [];
-
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api({
-			routerOptions: {basePath: testEnvPath + '/1'}
-		});
-
-		cb();
+	const api = new Api({
+		routerOptions: { basePath: testEnvPath + '/1' }
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/wepp', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/wepp', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"v":"0.2.0"}');
@@ -174,37 +143,29 @@ test('Specific version request', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Get specific version of README.md', function (t) {
+test('Get specific version of README.md', t => {
 	const tasks = [];
-
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api({
-			routerOptions: {basePath: testEnvPath + '/1'}
-		});
-
-		cb();
+	const api = new Api({
+		routerOptions: {basePath: testEnvPath + '/1'}
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request for README.md
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/?dal', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/0.2/?dal', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, 'This is old 0.2.0\n');
@@ -213,34 +174,27 @@ test('Get specific version of README.md', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Start without options', function (t) {
+test('Start without options', t => {
 	const tasks = [];
+	const api = new Api();
 
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api();
-		cb();
-	});
-
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request for README.md
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, fs.readFileSync(__dirname + '/../README.md').toString());
@@ -249,8 +203,8 @@ test('Start without options', function (t) {
 	});
 
 	// One more to get cached version
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, fs.readFileSync(__dirname + '/../README.md').toString());
@@ -259,34 +213,27 @@ test('Start without options', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Start without options or cb', function (t) {
+test('Start without options or cb', t => {
 	const tasks = [];
+	const api = new Api();
 
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api();
-		cb();
-	});
-
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
 	// Try 200 request for README.md
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, fs.readFileSync(__dirname + '/../README.md').toString());
@@ -295,36 +242,28 @@ test('Start without options or cb', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-
-test('Start with log in options sets log in router, reqParser and base', function (t) {
+test('Start with log in options sets log in router, reqParser and base', t => {
 	const tasks = [];
 	const LUtils = require('larvitutils');
 	const lUtils = new LUtils();
 	const log = new lUtils.Log({logLevel: 'info'});
+	const api = new Api({ log });
 
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api({log: log});
-		cb();
-	});
-
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		t.strictEqual(api.log, log);
 		t.strictEqual(api.router.log, log);
 		t.strictEqual(api.reqParser.log, log);
@@ -333,39 +272,32 @@ test('Start with log in options sets log in router, reqParser and base', functio
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});
 });
 
-test('Start log in router, reqParser and base options overrides the one created in lib', function (t) {
+test('Start log in router, reqParser and base options overrides the one created in lib', t => {
 	const tasks = [];
 	const LUtils = require('larvitutils');
 	const lUtils = new LUtils();
 	const log = new lUtils.Log({logLevel: 'info'});
-
-	let api;
-
-	// Start server
-	tasks.push(function (cb) {
-		api = new Api({
-			routerOptions: {log: log},
-			baseOptions: {log: log},
-			reqParserOptions: {log: log}
-		});
-		cb();
+	const api = new Api({
+		routerOptions: { log },
+		baseOptions: { log },
+		reqParserOptions: { log }
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		t.notStrictEqual(api.log, log);
 		t.strictEqual(api.router.log, log);
 		t.strictEqual(api.reqParser.log, log);
@@ -374,11 +306,11 @@ test('Start log in router, reqParser and base options overrides the one created 
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
-	async.series(tasks, function (err) {
+	async.series(tasks, err => {
 		if (err) throw err;
 		t.end();
 	});

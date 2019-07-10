@@ -2,11 +2,11 @@
 
 const freeport = require('freeport');
 const request = require('request');
-const tmpdir = require('os').tmpdir();
 const async = require('async');
+const path = require('path');
 const test = require('tape');
 const Api = require(__dirname + '/../index.js');
-const testEnvPath = tmpdir + '/test_environment';
+const testEnvPath = path.normalize(__dirname + '/../test_environment');
 
 test('Get README.md on /', function (t) {
 	const tasks = [];

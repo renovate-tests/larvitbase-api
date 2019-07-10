@@ -1,12 +1,12 @@
 'use strict';
 
 const request = require('request');
-const tmpdir = require('os').tmpdir();
 const async = require('async');
+const path = require('path');
 const test = require('tape');
 const Api = require(__dirname + '/../index.js');
 const fs = require('fs');
-const testEnvPath = tmpdir + '/test_environment';
+const testEnvPath = path.normalize(__dirname + '/../test_environment');
 
 test('404 for old version', function (t) {
 	const tasks = [];

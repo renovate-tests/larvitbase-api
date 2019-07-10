@@ -12,54 +12,47 @@ const LUtils = require('larvitutils');
 
 function Api(options) {
 	const logPrefix = topLogPrefix + 'Api() - ';
-	const that = this;
 
-	let controllersFullPath;
-	let lfs;
-	let altControllerPaths;
-
-	that.routeCache = {};
+	this.routeCache = {};
 
 	if (!options) {
 		options = {};
 	}
 
-	that.options = options;
+	this.options = options;
 
-	if (!that.options.log) {
+	if (!options.log) {
 		const lUtils = new LUtils();
-		that.options.log = new lUtils.Log();
+		options.log = new lUtils.Log();
 	}
-	that.log = that.options.log;
+	const log = this.log = options.log;
 
+	if (!options.routerOptions) { options.routerOptions = {}; }
+	if (!options.routerOptions.controllersPath) { options.routerOptions.controllersPath = 'controllers'; }
+	if (!options.routerOptions.basePath) { options.routerOptions.basePath = process.cwd(); }
+	if (!Array.isArray(options.routerOptions.routes)) { options.routerOptions.routes = []; }
 
-	if (!that.options.routerOptions) { that.options.routerOptions = {}; }
-	if (!that.options.routerOptions.controllersPath) { that.options.routerOptions.controllersPath = 'controllers'; }
-	if (!that.options.routerOptions.basePath) { that.options.routerOptions.basePath = process.cwd(); }
-	if (!Array.isArray(that.options.routerOptions.routes)) { that.options.routerOptions.routes = []; }
-
-	if (!that.options.baseOptions) that.options.baseOptions = {};
+	if (!options.baseOptions) options.baseOptions = {};
 	if (!Array.isArray(options.baseOptions.middleware)) {
 		options.baseOptions.middleware = [];
 	}
 
-	if (!that.options.reqParserOptions) { that.options.reqParserOptions = {}; }
+	if (!options.reqParserOptions) { options.reqParserOptions = {}; }
 
-	if (!that.options.baseOptions.log) { that.options.baseOptions.log = that.log; }
-	if (!that.options.routerOptions.log) { that.options.routerOptions.log = that.log; }
-	if (!that.options.reqParserOptions.log) { that.options.reqParserOptions.log = that.log; }
+	if (!options.baseOptions.log) { options.baseOptions.log = log; }
+	if (!options.routerOptions.log) { options.routerOptions.log = log; }
+	if (!options.reqParserOptions.log) { options.reqParserOptions.log = log; }
 
-	that.middleware = options.baseOptions.middleware;
+	this.middleware = options.baseOptions.middleware;
 
 	// Instantiate lfs
-	lfs = new Lfs({basePath: that.options.routerOptions.basePath});
-
-	altControllerPaths = lfs.getPathsSync('controllers');
+	const lfs = new Lfs({ basePath: options.routerOptions.basePath });
+	const altControllerPaths = lfs.getPathsSync('controllers');
 
 	// Resolve apiVersions
-	controllersFullPath = path.join(that.options.routerOptions.basePath, that.options.routerOptions.controllersPath);
+	const controllersFullPath = path.join(options.routerOptions.basePath, options.routerOptions.controllersPath);
 	if (fs.existsSync(controllersFullPath)) {
-		that.apiVersions = fs.readdirSync(controllersFullPath).filter(function (file) {
+		this.apiVersions = fs.readdirSync(controllersFullPath).filter(file => {
 			let versionStr = semver.clean(String(file) + '.0');
 
 			if (
@@ -72,29 +65,27 @@ function Api(options) {
 			}
 		});
 	} else {
-		that.apiVersions = [];
-		that.log.info(logPrefix + 'No controllers folder detected');
+		this.apiVersions = [];
+		log.info(logPrefix + 'No controllers folder detected');
 	}
 
 	// Sort apiVersions
-	that.apiVersions.sort(function (a, b) {
-		return semver.gt(a + '.0', b + '.0');
-	});
+	this.apiVersions.sort((a, b) => semver.gt(a + '.0', b + '.0'));
 
 	// Instantiate the router
-	that.router = new Router(that.options.routerOptions);
+	this.router = new Router(options.routerOptions);
 
 	// Instantiate the request parser
-	that.reqParser = new ReqParser(that.options.reqParserOptions);
+	this.reqParser = new ReqParser(options.reqParserOptions);
 
-	that.middleware.push(function (req, res, cb) {
-		that.reqParser.parse(req, res, cb);
+	this.middleware.push((req, res, cb) => {
+		this.reqParser.parse(req, res, cb);
 	});
 
 	// Default to the latest version of the API
-	that.middleware.push(function (req, res, cb) {
-		if (!semver.valid(req.url.split('/')[1] + '.0') && that.apiVersions.length) {
-			req.url = '/' + that.apiVersions[that.apiVersions.length - 1] + req.url;
+	this.middleware.push((req, res, cb) => {
+		if (!semver.valid(req.url.split('/')[1] + '.0') && this.apiVersions.length) {
+			req.url = '/' + this.apiVersions[this.apiVersions.length - 1] + req.url;
 		}
 		req.apiVersion = req.url.split('/')[1];
 		req.urlBase = req.url.split('?')[0];
@@ -102,12 +93,12 @@ function Api(options) {
 	});
 
 	// Route the request
-	that.middleware.push(function (req, res, cb) {
+	this.middleware.push((req, res, cb) => {
 		let readmeFile = false;
 
 		// Use cache first
-		if (that.routeCache[req.urlBase]) {
-			const rc = that.routeCache[req.urlBase];
+		if (this.routeCache[req.urlBase]) {
+			const rc = this.routeCache[req.urlBase];
 
 			if (rc.type === 'readme') {
 				res.setHeader('Content-Type', 'text/markdown; charset=UTF-8');
@@ -115,23 +106,22 @@ function Api(options) {
 
 				return;
 			} else {
-				req.routed = that.routeCache[req.urlBase];
+				req.routed = this.routeCache[req.urlBase];
 
 				return cb();
 			}
 		}
 
 		// Clean cache if more than 1000 entries to avoid ddos or such
-		if (Object.keys(that.routeCache).length > 1000) {
-			that.routeCache = {};
+		if (Object.keys(this.routeCache).length > 1000) {
+			this.routeCache = {};
 		}
 
 		// Check if url is matching a directory that contains a README.md
 
 		// Request directly on root, existing README.md in root
-		if (req.urlBase === '/' && lfs.getPathSync(path.join(that.options.routerOptions.basePath, '/README.md'))) {
-			readmeFile = path.join(that.options.routerOptions.basePath, '/README.md');
-
+		if (req.urlBase === '/' && lfs.getPathSync(path.join(options.routerOptions.basePath, '/README.md'))) {
+			readmeFile = path.join(options.routerOptions.basePath, '/README.md');
 		// README exists on exactly the version URL requested
 		} else if (lfs.getPathSync(path.join(req.urlBase, '/README.md').substring(1))) {
 			readmeFile = lfs.getPathSync(path.join(req.urlBase, '/README.md').substring(1));
@@ -149,14 +139,14 @@ function Api(options) {
 			return res.end('API is up and running. This API contains no README.md');
 		}
 
-		// If a readme file is found, send that to the browser and end the request
+		// If a readme file is found, send this to the browser and end the request
 		if (readmeFile) {
 			res.setHeader('Content-Type', 'text/markdown; charset=UTF-8');
 
-			return fs.readFile(readmeFile, function (err, data) {
+			return fs.readFile(readmeFile, (err, data) => {
 				if (err) return cb(err);
 
-				that.routeCache[req.urlBase] = {
+				this.routeCache[req.urlBase] = {
 					type: 'readme',
 					data: data
 				};
@@ -164,7 +154,7 @@ function Api(options) {
 			});
 		}
 
-		that.router.resolve(req.urlBase, function (err, result) {
+		this.router.resolve(req.urlBase, (err, result) => {
 			if (err) return cb(err);
 
 			// If nothing is found, check in the alternative controller paths
@@ -184,7 +174,7 @@ function Api(options) {
 								controllerFullPath: path.join(altControllerPaths[i], req.urlBase) + '.js',
 								controllerPath: req.urlBase
 							};
-							that.routeCache[req.urlBase] = req.routed; // Add to cache
+							this.routeCache[req.urlBase] = req.routed; // Add to cache
 							break;
 						}
 					}
@@ -192,7 +182,7 @@ function Api(options) {
 			}
 
 			if (!req.routed) {
-				that.routeCache[req.urlBase] = result;
+				this.routeCache[req.urlBase] = result;
 				req.routed = result;
 			}
 
@@ -201,7 +191,7 @@ function Api(options) {
 	});
 
 	// Run controller
-	that.middleware.push(function (req, res, cb) {
+	this.middleware.push((req, res, cb) => {
 		if (!req.routed.controllerFullPath) {
 			res.statusCode = 404;
 			res.data = '"URL endpoint not found"';
@@ -212,7 +202,7 @@ function Api(options) {
 	});
 
 	// Output JSON to client
-	that.middleware.push(function (req, res, cb) {
+	this.middleware.push((req, res, cb) => {
 		let sendData = res.data;
 
 		res.setHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -230,27 +220,26 @@ function Api(options) {
 	});
 
 	// Clean up if file storage is used by parser
-	that.middleware.push(function (req, res, cb) {
-		that.reqParser.clean(req, res, cb);
+	this.middleware.push((req, res, cb) => {
+		this.reqParser.clean(req, res, cb);
 	});
 };
 
 Api.prototype.start = function start(cb) {
-	const that = this;
+	const options = this.options;
 
-	that.base = new LBase(that.options.baseOptions);
+	this.base = new LBase(options.baseOptions);
 
-	that.base.start(cb);
+	this.base.start(cb);
 
-	that.base.on('error', function (err, req, res) {
+	this.base.on('error', (err, req, res) => {
 		res.statusCode = 500;
 		res.end('"Internal server error: ' + err.message + '"');
 	});
 };
 
 Api.prototype.stop = function (cb) {
-	const that = this;
-	that.base.httpServer.close(cb);
+	this.base.httpServer.close(cb);
 };
 
 exports = module.exports = Api;

@@ -2,4 +2,6 @@
 
 const test = require('tape');
 
-test('eslint', require('tape-eslint')());
+test('eslint', require('tape-eslint')({
+	ignore: ['test_environment/**']
+}));

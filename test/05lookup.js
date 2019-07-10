@@ -1,11 +1,11 @@
 'use strict';
 
 const request = require('request');
-const tmpdir = require('os').tmpdir();
 const async = require('async');
+const path = require('path');
 const test = require('tape');
 const Api = require(__dirname + '/../index.js');
-const testEnvPath = tmpdir + '/test_environment';
+const testEnvPath = path.normalize(__dirname + '/../test_environment');
 
 test('Use a controller from a dependency', function (t) {
 	const tasks = [];
@@ -13,7 +13,7 @@ test('Use a controller from a dependency', function (t) {
 	let api;
 
 	// Start server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api = new Api({
 			routerOptions: {basePath: testEnvPath + '/5'}
 		});
@@ -21,11 +21,11 @@ test('Use a controller from a dependency', function (t) {
 		cb();
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		request('http://localhost:' + api.base.httpServer.address().port + '/woo', function (err, response) {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 404);
@@ -33,8 +33,8 @@ test('Use a controller from a dependency', function (t) {
 		});
 	});
 
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"foo":"bar"}');
@@ -42,8 +42,8 @@ test('Use a controller from a dependency', function (t) {
 		});
 	});
 
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/boo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/boo', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(JSON.parse(body).version, '1.0');
@@ -51,8 +51,8 @@ test('Use a controller from a dependency', function (t) {
 		});
 	});
 
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/v1.0/boo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/v1.0/boo', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(JSON.parse(body).version, '1.0');
@@ -60,8 +60,8 @@ test('Use a controller from a dependency', function (t) {
 		});
 	});
 
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/v1.0/schloo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/v1.0/schloo', (err, response, body) => {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 200);
 			t.equal(body, '{"woo":"buntz"}');
@@ -70,7 +70,7 @@ test('Use a controller from a dependency', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 
@@ -83,31 +83,23 @@ test('Use a controller from a dependency', function (t) {
 test('User controller from a dependency, with version', function (t) {
 	const tasks = [];
 
-	let api;
+	const api = new Api({ routerOptions: { basePath: testEnvPath + '/6' } });
 
 	// Start server
-	tasks.push(function (cb) {
-		api = new Api({
-			routerOptions: {basePath: testEnvPath + '/6'}
-		});
-
-		cb();
-	});
-
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.start(cb);
 	});
 
-	tasks.push(function (cb) {
-		request('http://localhost:' + api.base.httpServer.address().port + '/foo', function (err, response, body) {
+	tasks.push(cb => {
+		request('http://localhost:' + api.base.httpServer.address().port + '/foo', (err, response, body) => {
 			if (err) return cb(err);
-			t.equal(response.statusCode, 200);
-			t.equal(JSON.parse(body).version, '1.2');
+			t.equal(response.statusCode, 200, 'Should get 200 for http://localhost:' + api.base.httpServer.address().port + '/foo');
+			t.equal(JSON.parse(body).version, '1.2', 'The resulting version should be 1.2');
 			cb();
 		});
 	});
 
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		request('http://localhost:' + api.base.httpServer.address().port + '/boo', function (err, response) {
 			if (err) return cb(err);
 			t.equal(response.statusCode, 404);
@@ -116,7 +108,7 @@ test('User controller from a dependency, with version', function (t) {
 	});
 
 	// Close server
-	tasks.push(function (cb) {
+	tasks.push(cb => {
 		api.stop(cb);
 	});
 

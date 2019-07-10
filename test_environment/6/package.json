@@ -1,0 +1,9 @@
+{
+    "name": "teststuff",
+    "version": "0.0.2",
+    "description": "test module for path resolving",
+    "dependencies": {
+        "submodule": "file:node_modules/submodule",
+        "submodule2": "file:node_modules/submodule2"
+    }
+}
