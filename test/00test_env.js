@@ -24,7 +24,6 @@ test('Extract test environment to tmp folder', function (t) {
 	tasks.push(function (cb) {
 		let readStream;
 
-
 		readStream = fs.createReadStream(__dirname + '/../test_environment.zip').pipe(unzip.Extract({path: tmpdir})); // eslint-disable-line
 
 		readStream.on('close', function () {
