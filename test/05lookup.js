@@ -9,18 +9,11 @@ const testEnvPath = path.normalize(__dirname + '/../test_environment');
 
 test('Use a controller from a dependency', function (t) {
 	const tasks = [];
-
-	let api;
-
-	// Start server
-	tasks.push(cb => {
-		api = new Api({
-			routerOptions: {basePath: testEnvPath + '/5'}
-		});
-
-		cb();
+	const api = new Api({
+		routerOptions: {basePath: testEnvPath + '/5'}
 	});
 
+	// Start server
 	tasks.push(cb => {
 		api.start(cb);
 	});
