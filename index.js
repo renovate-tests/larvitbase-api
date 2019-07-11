@@ -170,7 +170,7 @@ function Api(options) {
 						const urlBase = path.join(altControllerPaths[i], req.urlBase);
 
 						// Security check for relative paths above the alternative controller path
-						if (!urlBase.startsWith(altControllerPaths[1])) {
+						if (!urlBase.startsWith(altControllerPaths[i])) {
 							log.info(logPrefix + 'SECURITY! Intruder detection, path above the controller path is trying to be obtained, via: "' + req.urlBase + '"');
 							break;
 						}
